@@ -8,6 +8,7 @@ namespace OurLinkedList
         public int age = 0;
 
         public Node next;
+        public Node previous;
 
         public Node(string name, int age)
         {
@@ -15,6 +16,7 @@ namespace OurLinkedList
             this.age = age;
 
             next = null;
+            previous = null;
         }
     }
 
@@ -50,36 +52,91 @@ namespace OurLinkedList
     {
         private Node current;
         private Node header;
+        private Node tail;
 
         public LinkedList(Node node)
         {
             header = node;
+            tail = node;
             current = node;
             header.next = null;
+            header.previous = null;
         }
 
         public void InsertNext(Node newNode)
         {
-            if (current.next == null)
+            if (current == null)
+            {
+                header = newNode;
+                tail = newNode;
+                newNode.next = null;
+                newNode.previous = null;
+            }
+
+            else if (current.next == null)
             {
                 current.next = newNode;
                 newNode.next = null;
+                newNode.previous = current;
+                tail = newNode;
             }
 
             else
             {
                 newNode.next = current.next;
                 current.next = newNode;
+
+                newNode.next.previous = newNode;
             }
 
             current = newNode; // Optional
         }
 
+        public void InsertPrevious(Node newNode)
+        {
+            if (current == null)
+            {
+                header = newNode;
+                tail = newNode;
+            }
+
+            else if (current.previous == null)
+            {
+                newNode.previous = current.previous;
+                current.previous = newNode;
+                newNode.previous.next = newNode;
+                newNode.next = current;
+            }
+
+            current = newNode;
+        }
+
         public bool Next()
         {
+            if (current == null)
+            {
+                return false;
+            }
+
             if (current.next != null)
             {
                 current = current.next;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Previous()
+        {
+            if (current == null)
+            {
+                return false;
+            }
+
+            if (current.previous != null)
+            {
+                current = current.previous;
                 return true;
             }
 
@@ -95,7 +152,61 @@ namespace OurLinkedList
 
             current.next = current.next.next;
 
+            if (current.next == null)
+            {
+                tail = current;
+            }
+
+            else
+            {
+                current.next.previous = current;
+            }
+
+            // if you're using C++ raw pointers, you would have delete() here
             return true;
+        }
+
+        public bool DeletePrevious()
+        {
+            if (current.previous == null)
+            {
+                return false;
+            }
+
+            current.previous = current.previous.previous;
+
+            if (current.previous == null)
+            {
+                header = current;
+            }
+
+            else
+            {
+                current.previous.next = current;
+            }
+
+            // if you're using C++ raw pointers, you would have delete() here
+            return true;
+        }
+
+        public void DeleteCurrent()
+        {
+            if (Previous())
+            {
+                DeleteNext();
+            }
+
+            else if (Next())
+            {
+                DeletePrevious();
+            }
+
+            else
+            {
+                header = null;
+                tail = null;
+                current = null;
+            }
         }
 
         public void ReturnToHeader()
