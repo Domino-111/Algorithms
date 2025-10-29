@@ -1,5 +1,6 @@
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MyBinaryTree
 {
@@ -21,6 +22,7 @@ namespace MyBinaryTree
     {
         private Node root;
 
+        [ContextMenu("Test Binary Tree")]
         void Start()
         {
             root = new Node(50);
@@ -33,6 +35,12 @@ namespace MyBinaryTree
             Insert(1, root);
             Insert(9, root);
             Insert(2, root);
+
+            PrintInOrder(root);
+
+            Delete(20, root);
+
+            PrintInOrder(root);
         }
 
         public void Insert(int value, Node current)
@@ -119,8 +127,34 @@ namespace MyBinaryTree
             {
                 return null;
             }
+        
+            // Searching for the correct value
+            if (value < current.value)
+            {
+                current.left = Delete(value, current.left);
+            }
+            // Searching for the correct value
+            else if (value > current.value)
+            {
+                current.right = Delete(value, current.right);   
+            }
 
-            // Delete Here
+            else // If found the value to delete
+            {
+                if (current.left == null)
+                {
+                    return current.right;
+                }
+
+                if (current.right == null)
+                {
+                    return current.left;
+                }
+
+                Node successor = GetSuccessor(current);
+                current.value = successor.value;
+                current.right = Delete(successor.value, current.right);
+            }
 
             return current;
         }
