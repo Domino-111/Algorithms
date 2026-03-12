@@ -9,7 +9,7 @@ public class AnimatorCall : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animator>();
-        hash = Animator.StringToHash("Base Layer.Walking");
+        hash = Animator.StringToHash("Walking");
     }
 
     void Update()
